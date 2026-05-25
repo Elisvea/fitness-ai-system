@@ -1,0 +1,582 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    color: #111827;
+    overflow-x: hidden;
+}
+
+/* Авторизация и регистрация */
+
+.login-container {
+    width: 420px;
+    margin: 120px auto;
+    padding: 40px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.login-container h1 {
+    font-size: 34px;
+}
+
+.login-container p {
+    color: #777;
+    font-size: 18px;
+}
+
+.login-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.login-container input {
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.login-container button {
+    padding: 14px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-container a {
+    color: #4CAF50;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Шапка */
+
+.site-header {
+    width: 100%;
+    padding: 16px 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eeeeee;
+    background: white;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.logout-button {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #f1f5f9;
+}
+
+/* Главная */
+
+.home-page {
+    padding: 45px 70px 30px;
+}
+
+.hero-section {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 35px;
+    align-items: center;
+}
+
+.hero-badge {
+    display: inline-block;
+    padding: 8px 14px;
+    margin-bottom: 20px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.hero-text h1 {
+    font-size: 40px;
+    line-height: 1.12;
+    margin-bottom: 18px;
+}
+
+.hero-text p {
+    max-width: 700px;
+    color: #6b7280;
+    font-size: 18px;
+    line-height: 1.45;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.primary-btn,
+.outline-btn {
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.primary-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.outline-btn {
+    background: white;
+    color: #111827;
+    border: 1px solid #d1d5db;
+}
+
+.hero-card,
+.feature-card,
+.article-card,
+.article-detail-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+.hero-card {
+    padding: 28px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+}
+
+.hero-card h3 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.hero-card ul {
+    color: #4b5563;
+    line-height: 1.8;
+}
+
+.features-section {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(260px, 420px));
+    gap: 24px;
+}
+
+.feature-card {
+    min-height: 120px;
+    padding: 24px;
+    border-radius: 22px;
+}
+
+.feature-card h3 {
+    margin-top: 0;
+    font-size: 22px;
+}
+
+.feature-card p {
+    color: #6b7280;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Страница статей */
+
+.articles-page {
+    padding: 45px 70px 70px;
+}
+
+.articles-hero {
+    max-width: 760px;
+    margin-bottom: 40px;
+}
+
+.articles-hero h1 {
+    margin: 18px 0;
+    font-size: 42px;
+    line-height: 1.15;
+}
+
+.articles-hero p {
+    color: #6b7280;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 480px));
+    gap: 28px;
+}
+
+.article-card {
+    padding: 28px;
+    border-radius: 24px;
+    box-shadow: 0 14px 35px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.article-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.08);
+}
+
+.article-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 18px;
+    border-radius: 16px;
+    background: #e8f5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.article-card h2 {
+    margin: 14px 0;
+    font-size: 24px;
+}
+
+.article-card p {
+    color: #6b7280;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.category {
+    display: inline-block;
+    padding: 7px 13px;
+    border-radius: 999px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.read-button {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    background: #4CAF50;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Страница одной статьи и админ-панель */
+
+.article-detail-page {
+    width: 100%;
+    min-height: calc(100vh - 70px);
+    padding: 60px 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.article-detail-card {
+    width: 100%;
+    max-width: 900px;
+    padding: 48px;
+    border-radius: 32px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.06);
+}
+
+.article-detail-card h1 {
+    margin: 22px 0;
+    font-size: 42px;
+    line-height: 1.15;
+}
+
+.article-text {
+    color: #374151;
+    font-size: 19px;
+    line-height: 1.75;
+}
+
+/* Форма администратора */
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.admin-form label {
+    font-weight: 700;
+    color: #111827;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    background: white;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+.admin-form textarea {
+    min-height: 260px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* AI чат */
+
+#openChatButton {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    padding: 16px 22px;
+    border: none;
+    border-radius: 999px;
+    background: #4CAF50;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 14px 35px rgba(76,175,80,0.35);
+    z-index: 1000;
+}
+
+#chatPanel {
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    width: 380px;
+    height: 620px;
+    background: white;
+    border-radius: 28px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    z-index: 2000;
+}
+
+#chatPanel.show {
+    display: flex;
+}
+
+.chat-header {
+    padding: 22px 24px;
+    background: #4CAF50;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.chat-header span {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+#closeChatButton {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #f9fafb;
+}
+
+.bot-message,
+.user-message {
+    max-width: 82%;
+    padding: 14px 16px;
+    border-radius: 18px;
+    line-height: 1.5;
+    font-size: 15px;
+    word-wrap: break-word;
+}
+
+.bot-message {
+    background: white;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    align-self: flex-start;
+}
+
+.user-message {
+    background: #4CAF50;
+    color: white;
+    align-self: flex-end;
+}
+
+.rag-answer {
+    color: #374151;
+    line-height: 1.5;
+}
+
+.sources-title {
+    margin-top: 14px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.sources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.article-link {
+    display: inline-block;
+    padding: 9px 12px;
+    border-radius: 12px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.article-link:hover {
+    background: #d7f0da;
+    text-decoration: none;
+}
+
+.bot-message a {
+    color: #2e7d32;
+}
+
+.chat-input-area {
+    padding: 18px;
+    border-top: 1px solid #eeeeee;
+    display: flex;
+    gap: 12px;
+    background: white;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    font-size: 15px;
+    outline: none;
+}
+
+.chat-input-area button {
+    width: 52px;
+    height: 52px;
+    border: none;
+    border-radius: 14px;
+    background: #4CAF50;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Адаптация */
+
+@media (max-width: 900px) {
+    .site-header,
+    .home-page,
+    .articles-page {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .hero-section,
+    .features-section,
+    .articles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .article-detail-page {
+        padding: 30px 24px;
+    }
+
+    .article-detail-card {
+        padding: 30px;
+        border-radius: 24px;
+    }
+
+    .article-detail-card h1 {
+        font-size: 34px;
+    }
+}
+
+@media (max-width: 600px) {
+    #chatPanel {
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+
+    #openChatButton {
+        right: 20px;
+        bottom: 20px;
+    }
+
+    .login-container {
+        width: calc(100% - 32px);
+        margin: 80px auto;
+    }
+}
+
+.article-link {
+    text-decoration: underline;
+    color: #2F855A; /* зеленый */
+    padding: 0;
+    margin: 0 4px;
+    display: inline;
+    font-weight: normal;
+    background: none;
+    border: none;
+}

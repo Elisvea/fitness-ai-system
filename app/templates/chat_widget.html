@@ -1,0 +1,47 @@
+<button id="openChatButton" onclick="openChat()">
+    Задать вопрос<br>чат-боту
+</button>
+
+<div id="chatPanel">
+
+    <div class="chat-header">
+
+        <div>
+            <h3>Фитнес-Помощник</h3>
+            <span>ИИ-консультант</span>
+        </div>
+
+        <button id="closeChatButton" onclick="closeChat()">
+            ✕
+        </button>
+
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+
+        <div class="bot-message">
+            Здравствуйте 👋
+
+            <br><br>
+
+            Я помогу вам с вопросами
+            о тренировках, питании и здоровье.
+        </div>
+
+    </div>
+
+    <div class="chat-input-area">
+
+        <input
+            type="text"
+            id="chatInput"
+            placeholder="Введите сообщение..."
+        >
+
+        <button onclick="sendMessage()">
+            ➜
+        </button>
+
+    </div>
+
+</div>

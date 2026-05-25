@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Статьи | Фитнес-Помощник</title>
+
+    <link rel="stylesheet" href="/static/css/styles.css?v=34">
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="logo">
+        Фитнес-Помощник
+    </div>
+
+    <nav class="nav-menu">
+
+        {% if user_role == "admin" %}
+
+            <a href="/admin/articles/new">
+                Добавить статью
+            </a>
+
+        {% else %}
+
+            <a href="/home">
+                Главная
+            </a>
+
+        {% endif %}
+
+        <a class="logout-button" href="/logout">
+            Выйти
+        </a>
+
+    </nav>
+
+</header>
+
+<main class="articles-page">
+
+    <section class="articles-hero">
+
+        <span class="hero-badge">
+            База знаний
+        </span>
+
+        <h1>
+            Статьи о фитнесе, питании и здоровье
+        </h1>
+
+        <p>
+            Изучайте материалы, которые в дальнейшем будут использоваться
+            ИИ-помощником для поиска информации и формирования ответов.
+        </p>
+
+    </section>
+
+    <section class="articles-grid">
+
+        {% for article in articles %}
+
+            <div class="article-card">
+
+                <div class="article-icon">
+                    🏃‍♀️
+                </div>
+
+                <span class="category">
+                    {{ article.category }}
+                </span>
+
+                <h2>
+                    {{ article.title }}
+                </h2>
+
+                <p>
+                    {{ article.content[:180] }}...
+                </p>
+
+                <a
+                    class="read-button"
+                    href="/articles/{{ article.id }}"
+                >
+                    Читать статью
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </section>
+
+</main>
+
+{% if user_role != "admin" %}
+
+    {% include "chat_widget.html" %}
+
+    <script src="/static/js/chat.js?v=30"></script>
+
+{% endif %}
+
+</body>
+</html>

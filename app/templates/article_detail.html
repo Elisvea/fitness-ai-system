@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ article.title }} | Фитнес-Помощник</title>
+    <link rel="stylesheet" href="/static/css/styles.css?v=34">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="logo">Фитнес-Помощник</div>
+    <nav class="nav-menu">
+        <a href="/articles">Статьи</a>
+        <a class="logout-button" href="/logout">Выйти</a>
+    </nav>
+</header>
+
+<main class="article-detail-page">
+
+    <article class="article-detail-card">
+        <span class="category">{{ article.category }}</span>
+        <h1>{{ article.title }}</h1>
+        <div class="article-text">
+            {{ article.content | safe }}
+        </div>
+
+        <a class="read-button" href="/articles">Вернуться к статьям</a>
+    </article>
+
+</main>
+
+{# Показываем чат только для обычных пользователей #}
+{% if user_role != "admin" %}
+    {% include "chat_widget.html" %}
+{% endif %}
+
+<script src="/static/js/chat.js?v=14"></script>
+
+</body>
+</html>

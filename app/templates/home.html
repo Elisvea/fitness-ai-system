@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Главная | Фитнес-Помощник</title>
+    <link rel="stylesheet" href="/static/css/styles.css?v=11">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="logo">Фитнес-Помощник</div>
+
+    <nav class="nav-menu">
+        <a href="/articles">Статьи</a>
+
+        <a class="logout-button" href="/">
+            Выйти
+        </a>
+    </nav>
+</header>
+
+<main class="home-page">
+
+    <section class="hero-section">
+
+        <div class="hero-text">
+            <span class="hero-badge">Интеллектуальная система о фитнесе и здоровье</span>
+
+            <h1>
+                Ваш персональный помощник в мире фитнеса, питания и здорового образа жизни
+            </h1>
+
+            <p>
+                Изучайте полезные статьи, получайте информацию о тренировках
+                и задавайте вопросы встроенному ИИ-помощнику.
+            </p>
+
+            <div class="hero-buttons">
+                <a class="primary-btn" href="/articles">Перейти к статьям</a>
+                <button class="outline-btn" onclick="openChat()">Задать вопрос ИИ</button>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <h3>Что умеет система?</h3>
+
+            <ul>
+                <li>Подбирает информацию из статей</li>
+                <li>Помогает разобраться в питании</li>
+                <li>Объясняет основы тренировок</li>
+                <li>Поддерживает работу ИИ-помощника</li>
+            </ul>
+        </div>
+
+    </section>
+
+    <section class="features-section">
+
+        <div class="feature-card">
+            <h3>Статьи</h3>
+            <p>
+                Материалы по тренировкам, питанию, кардио,
+                снижению веса и здоровому образу жизни.
+            </p>
+        </div>
+
+        <div class="feature-card">
+            <h3>ИИ-помощник</h3>
+            <p>
+                Встроенный чат помогает быстро получить ответ
+                на вопрос без перехода на другую страницу.
+            </p>
+        </div>
+
+    </section>
+
+</main>
+
+{% include "chat_widget.html" %}
+
+<script src="/static/js/chat.js?v=13"></script>
+
+</body>
+</html>
