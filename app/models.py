@@ -18,9 +18,7 @@ class Article(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     content = Column(Text, nullable=False)
-    category = Column(String, nullable=False)
-    source_url = Column(String, nullable=True)
-    embedding = Column(Text, nullable=True)
+
 
 
 class ChatMessageModel(Base):

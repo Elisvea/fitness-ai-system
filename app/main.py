@@ -14,30 +14,7 @@ from app.services.ai_service import generate_answer_with_context
 
 Base.metadata.create_all(bind=engine)
 
-# Тестовые данные 
-def add_test_articles():
-    db = SessionLocal()
-    if db.query(Article).count() == 0:
-        articles = [
-            Article(
-                title="Основы правильного питания",
-                content="Правильное питание помогает поддерживать здоровье, энергию и нормальный обмен веществ. В рационе должны быть белки, жиры, углеводы, витамины и достаточное количество воды.",
-                category="Питание"
-            ),
-            Article(
-                title="Польза регулярных тренировок",
-                content="Регулярные тренировки укрепляют мышцы, улучшают работу сердца, повышают выносливость и помогают поддерживать хорошее самочувствие.",
-                category="Тренировки"
-            ),
-            Article(
-                title="Кардио для здоровья",
-                content="Кардиотренировки помогают развивать выносливость, укрепляют сердечно-сосудистую систему и способствуют снижению лишнего веса.",
-                category="Тренировки"
-            )
-        ]
-        db.add_all(articles)
-        db.commit()
-    db.close()
+
 
 def add_admin_user():
     db = SessionLocal()
@@ -51,7 +28,6 @@ def add_admin_user():
         db.commit()
     db.close()
 
-add_test_articles()
 add_admin_user()
 
 # FastAPI 
@@ -221,13 +197,20 @@ async def new_article_page(request: Request):
     )
 
 @app.post("/admin/articles/new")
-async def create_article(request: Request, title: str = Form(...), category: str = Form(...), content: str = Form(...), source_url: str = Form("")):
+async def create_article(
+    request: Request,
+    title: str = Form(...),
+    content: str = Form(...)
+):
     user_role = request.cookies.get("user_role")
     if user_role != "admin":
         return RedirectResponse(url="/", status_code=303)
 
     db = SessionLocal()
-    new_article = Article(title=title, category=category, content=content, source_url=source_url if source_url else None, embedding=None)
+    new_article = Article(
+    title=title,
+    content=content
+)
     db.add(new_article)
     db.commit()
     db.refresh(new_article)

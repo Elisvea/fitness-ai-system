@@ -1,130 +1,119 @@
+from types import SimpleNamespace
+
+import chromadb
+
 from app.models import Article
 from app.services.embedding_service import (
     create_embedding,
-    embedding_to_json,
-    json_to_embedding,
-    cosine_similarity
+    create_embeddings,
+    split_text_into_chunks
 )
 
 
-STOP_WORDS = {
-    "и", "в", "во", "на", "по", "для", "с", "со", "о", "об",
-    "как", "что", "это", "а", "но", "или", "если", "при",
-    "мне", "меня", "мой", "моя", "можно", "нужно", "надо",
-    "the", "a", "an", "is", "are", "to", "of", "in"
-}
+CHROMA_PATH = "app/chroma_db"
+COLLECTION_NAME = "fitness_materials"
+
+MAX_DISTANCE = 0.65
 
 
-def normalize_text(text: str) -> list[str]:
-    text = text.lower()
+chroma_client = chromadb.PersistentClient(
+    path=CHROMA_PATH
+)
 
-    symbols = ".,!?;:()[]{}«»\"'"
-    for symbol in symbols:
-        text = text.replace(symbol, " ")
-
-    words = text.split()
-
-    return [
-        word for word in words
-        if len(word) > 2 and word not in STOP_WORDS
-    ]
+collection = chroma_client.get_or_create_collection(
+    name=COLLECTION_NAME,
+    metadata={
+        "hnsw:space": "cosine"
+    }
+)
 
 
-def create_article_embeddings(db):
+def index_articles(db):
     articles = db.query(Article).all()
 
+    ids = []
+    documents = []
+    metadatas = []
+
     for article in articles:
-        if article.embedding is None:
-            text_for_embedding = (
-                f"{article.title}. "
-                f"{article.category}. "
-                f"{article.content}"
-            )
+        full_text = (
+            f"Название: {article.title}\n"
+            f"{article.content}"
+        )
 
-            embedding = create_embedding(text_for_embedding)
-            article.embedding = embedding_to_json(embedding)
+        chunks = split_text_into_chunks(full_text)
 
-    db.commit()
+        for index, chunk in enumerate(chunks):
+            ids.append(f"article_{article.id}_chunk_{index}")
+            documents.append(chunk)
+            metadatas.append({
+                "article_id": article.id,
+                "title": article.title,
+                "chunk_index": index
+            })
+
+    if not documents:
+        return
+
+    embeddings = create_embeddings(documents)
+
+    collection.upsert(
+        ids=ids,
+        documents=documents,
+        metadatas=metadatas,
+        embeddings=embeddings
+    )
 
 
 def search_articles_by_question(db, question: str, limit: int = 3):
-    create_article_embeddings(db)
+    index_articles(db)
 
     question_embedding = create_embedding(question)
 
-    articles = db.query(Article).filter(
-        Article.embedding.isnot(None)
-    ).all()
+    results = collection.query(
+        query_embeddings=[question_embedding],
+        n_results=8,
+        include=[
+            "documents",
+            "metadatas",
+            "distances"
+        ]
+    )
 
-    scored_articles = []
+    documents = results.get("documents", [[]])[0]
+    metadatas = results.get("metadatas", [[]])[0]
+    distances = results.get("distances", [[]])[0]
 
-    for article in articles:
-        article_embedding = json_to_embedding(article.embedding)
+    found_articles = {}
 
-        score = cosine_similarity(
-            question_embedding,
-            article_embedding
+    for document, metadata, distance in zip(documents, metadatas, distances):
+        if distance > MAX_DISTANCE:
+            continue
+
+        article_id = metadata["article_id"]
+
+        if article_id not in found_articles:
+            found_articles[article_id] = {
+                "id": article_id,
+                "title": metadata["title"],
+                "chunks": []
+            }
+
+        found_articles[article_id]["chunks"].append(document)
+
+    result = []
+
+    for article_data in found_articles.values():
+        result.append(
+            SimpleNamespace(
+                id=article_data["id"],
+                title=article_data["title"],
+                category="Статья",
+                content="\n\n".join(article_data["chunks"])
+            )
         )
 
-        scored_articles.append({
-            "article": article,
-            "score": score
-        })
+        if len(result) >= limit:
+            break
 
-    scored_articles.sort(
-        key=lambda item: item["score"],
-        reverse=True
-    )
-
-    top_articles = [
-        item["article"]
-        for item in scored_articles[:limit]
-        if item["score"] > 0.25
-    ]
-
-    if top_articles:
-        return top_articles
-
-    return search_articles_by_keywords(db, question, limit)
-
-
-def search_articles_by_keywords(db, question: str, limit: int = 3):
-    question_words = normalize_text(question)
-
-    if not question_words:
-        return []
-
-    articles = db.query(Article).all()
-
-    scored_articles = []
-
-    for article in articles:
-        title = article.title.lower()
-        content = article.content.lower()
-        category = article.category.lower()
-
-        score = 0
-
-        for word in question_words:
-            if word in title:
-                score += 5
-            if word in category:
-                score += 3
-            if word in content:
-                score += 1
-
-        if score > 0:
-            scored_articles.append({
-                "article": article,
-                "score": score
-            })
-
-    scored_articles.sort(
-        key=lambda item: item["score"],
-        reverse=True
-    )
-
-    return [
-        item["article"]
-        for item in scored_articles[:limit]
-    ]
+    return result

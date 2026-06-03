@@ -1,5 +1,3 @@
-import json
-import numpy as np
 from sentence_transformers import SentenceTransformer
 
 
@@ -9,28 +7,49 @@ embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
 
 
 def create_embedding(text: str) -> list[float]:
-    embedding = embedding_model.encode(text)
+    embedding = embedding_model.encode(
+        text,
+        normalize_embeddings=True
+    )
 
     return embedding.tolist()
 
 
-def embedding_to_json(embedding: list[float]) -> str:
-    return json.dumps(embedding)
+def create_embeddings(texts: list[str]) -> list[list[float]]:
+    embeddings = embedding_model.encode(
+        texts,
+        normalize_embeddings=True
+    )
+
+    return embeddings.tolist()
 
 
-def json_to_embedding(embedding_json: str) -> np.ndarray:
-    return np.array(json.loads(embedding_json))
+def split_text_into_chunks(
+    text: str,
+    chunk_size: int = 700,
+    overlap: int = 120
+) -> list[str]:
+    text = text.strip()
 
+    if not text:
+        return []
 
-def cosine_similarity(vector_a, vector_b) -> float:
-    vector_a = np.array(vector_a)
-    vector_b = np.array(vector_b)
+    chunks = []
+    start = 0
 
-    dot_product = np.dot(vector_a, vector_b)
-    norm_a = np.linalg.norm(vector_a)
-    norm_b = np.linalg.norm(vector_b)
+    while start < len(text):
+        end = start + chunk_size
+        chunk = text[start:end].strip()
 
-    if norm_a == 0 or norm_b == 0:
-        return 0.0
+        if chunk:
+            chunks.append(chunk)
 
-    return dot_product / (norm_a * norm_b)
+        start = end - overlap
+
+        if start < 0:
+            start = 0
+
+        if start >= len(text):
+            break
+
+    return chunks
