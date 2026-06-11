@@ -6,11 +6,18 @@ os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 os.environ["no_proxy"] = "localhost,127.0.0.1"
 
 
-MODEL_NAME = "qwen2.5:7b"
+MODEL_NAME = "qwen2.5:3b"
 
 client = ollama.Client(
     host="http://127.0.0.1:11434"
 )
+
+
+
+
+
+
+
 
 
 def generate_answer_with_context(
@@ -21,50 +28,88 @@ def generate_answer_with_context(
     if history is None:
         history = []
 
+    profile_text = ""
+    real_question = question
+
+    if "Вопрос пользователя:" in question:
+        parts = question.split("Вопрос пользователя:", 1)
+        profile_text = parts[0].strip()
+        real_question = parts[1].strip()
+
+    print("\n=== PROFILE ===")
+    print(profile_text)
+
+    print("\n=== QUESTION ===")
+    print(real_question)
+   
+    
     context_parts = []
 
     for article in articles:
         context_parts.append(
-            f"Название материала: {article.title}\n"
-            f"Категория: {article.category}\n"
-            f"Фрагмент материала:\n{article.content[:1200]}"
+            f"""
+Название материала:
+{article.title}
+
+Содержание:
+{article.content}
+"""
         )
 
     context = "\n\n".join(context_parts)
 
+
     history_text = ""
 
-    for message in history[-6:]:
-        role = "Пользователь"
+    for message in history[-3:]:
+        role = (
+            "Пользователь"
+            if message.role == "user"
+            else "Ассистент"
+        )
 
-        if message.role == "assistant":
-            role = "Ассистент"
-
-        history_text += f"{role}: {message.content}\n"
-
+        history_text += (
+            f"{role}: "
+            f"{message.content}\n"
+        )
     prompt = f"""
-Ты — русскоязычный ИИ-помощник по фитнесу, питанию, тренировкам и здоровому образу жизни.
+Ты — ИИ-ассистент системы поддержки здорового образа жизни.
 
-Правила ответа:
-1. Отвечай только на русском языке.
-2. Отвечай естественно и понятно.
-3. Не начинай ответ фразами вроде "Ваш запрос включает" или "В вашем вопросе".
-4. Не используй английские слова.
-5. Не используй Markdown-разметку, символы *, # и списки.
-6. Используй только информацию из найденных материалов.
-7. Если в материалах нет ответа, напиши: "Информация не найдена в материалах сайта."
-8. Если вопрос уточняющий, используй историю диалога, чтобы понять, о чём идёт речь.
-9. Не повторяй предыдущий ответ дословно.
-10. Дай ответ в 3–6 предложениях.
+Используй только переданный контекст.
 
-История диалога:
-{history_text}
+Запрещено:
 
-Найденные материалы:
+— придумывать рекомендации;
+— менять упражнения;
+— менять нагрузки;
+— добавлять новые ограничения;
+— использовать знания вне контекста.
+
+Если информации недостаточно —
+сообщи об этом.
+
+Если вопрос не относится к:
+
+— физической активности;
+— упражнениям;
+— питанию;
+— здоровому образу жизни,
+
+ответь строго:
+
+Я могу отвечать только на вопросы, связанные с физической активностью, упражнениями и подходящим питанием.
+
+Контекст:
+
 {context}
 
-Вопрос пользователя:
-{question}
+История:
+
+{history_text}
+
+Вопрос:
+
+{real_question}
 
 Ответ:
 """
@@ -80,30 +125,31 @@ def generate_answer_with_context(
             ],
             stream=False,
             options={
-                "num_predict": 220,
-                "num_ctx": 1536,
-                "temperature": 0.1
+                "num_predict": 600,
+                "num_ctx": 8192,
+                "temperature": 0
             }
         )
 
-        answer = response["message"]["content"].strip()
+        answer = (
+            response["message"]["content"]
+            .replace("**", "")
+            .replace("#", "")
+            .strip()
+        )
 
-        if any(
-            symbol in answer
-            for symbol in ["你", "好", "是", "的", "了", "在", "人", "有", "中", "国"]
-        ):
+        if len(answer) < 40:
             return (
-                "Произошла ошибка генерации ответа. "
-                "Пожалуйста, попробуйте задать вопрос ещё раз."
+                "Не удалось сформировать развёрнутый ответ. "
+                "Попробуйте уточнить вопрос."
             )
 
         return answer
 
     except Exception as error:
-        print("Ошибка Ollama:", error)
+        print(error)
 
         return (
-            "Я нашёл подходящие материалы, "
-            "но сейчас не смог сгенерировать ответ моделью. "
-            "Проверьте, запущена ли Ollama и доступна ли модель qwen2.5:3b."
+            "Сейчас не удалось сформировать ответ. "
+            "Попробуйте повторить запрос."
         )

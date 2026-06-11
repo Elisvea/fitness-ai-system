@@ -3,19 +3,19 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Главная | Фитнес-Помощник</title>
-    <link rel="stylesheet" href="/static/css/styles.css?v=11">
+    <title>Главная | Система поддержки здорового образа жизни</title>
+    <link rel="stylesheet" href="/static/css/styles.css?v=27">
 </head>
 
 <body>
 
 <header class="site-header">
-    <div class="logo">Фитнес-Помощник</div>
+    <div class="logo">Система поддержки здорового образа жизни</div>
 
     <nav class="nav-menu">
-        <a href="/articles">Статьи</a>
+        <a href="/articles">Материалы</a>
 
-        <a class="logout-button" href="/">
+        <a class="logout-button" href="/logout">
             Выйти
         </a>
     </nav>
@@ -23,56 +23,244 @@
 
 <main class="home-page">
 
-    <section class="hero-section">
+    <section class="profile-section">
 
-        <div class="hero-text">
-            <span class="hero-badge">Интеллектуальная система о фитнесе и здоровье</span>
+        <div class="profile-left">
 
-            <h1>
-                Ваш персональный помощник в мире фитнеса, питания и здорового образа жизни
-            </h1>
+            <span class="hero-badge">
+                Личный профиль
+            </span>
 
             <p>
-                Изучайте полезные статьи, получайте информацию о тренировках
-                и задавайте вопросы встроенному ИИ-помощнику.
+                На основе данных профиля система формирует рекомендации по тренировкам и питанию.
+                Укажите параметры для получения персональных рекомендаций.
             </p>
+
+
+        
+            <div class="profile-edit-layout">
+
+                <div class="profile-card">
+
+                    <div class="profile-row">
+                        <span>Рост</span>
+                        <strong>
+                            {{ user.height if user.height else "Не указан" }}
+                            {% if user.height %} см{% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>Вес</span>
+                        <strong>
+                            {{ user.weight if user.weight else "Не указан" }}
+                            {% if user.weight %} кг{% endif %}
+                        </strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>ИМТ</span>
+                        <strong>
+                            {{ user.bmi if user.bmi else "Не рассчитан" }}
+                        </strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>Категория</span>
+                        <strong>
+                            {{ user.bmi_category if user.bmi_category else "Не определена" }}
+                        </strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>Цель</span>
+                        <strong>
+                            {{ user.goal if user.goal else "Не выбрана" }}
+                        </strong>
+                    </div>
+
+                    <div class="profile-row">
+                        <span>Ограничения</span>
+                        <strong>
+                            {{ user.health_restrictions if user.health_restrictions else "Отсутствуют" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+                
+
+            </div>
 
             <div class="hero-buttons">
-                <a class="primary-btn" href="/articles">Перейти к статьям</a>
-                <button class="outline-btn" onclick="openChat()">Задать вопрос ИИ</button>
+                <button
+                    class="primary-btn"
+                    onclick="toggleProfileForm()"
+                >
+                    Редактировать профиль
+                </button>
+
             </div>
+
         </div>
 
-        <div class="hero-card">
-            <h3>Что умеет система?</h3>
 
-            <ul>
-                <li>Подбирает информацию из статей</li>
-                <li>Помогает разобраться в питании</li>
-                <li>Объясняет основы тренировок</li>
-                <li>Поддерживает работу ИИ-помощника</li>
-            </ul>
-        </div>
+        <div class="profile-right">
 
-    </section>
+            <div
+            id="profile-form"
+            class="profile-form"
+            style="display:none;"
+            >
 
-    <section class="features-section">
+            <form method="post" action="/profile/update">
 
-        <div class="feature-card">
-            <h3>Статьи</h3>
-            <p>
-                Материалы по тренировкам, питанию, кардио,
-                снижению веса и здоровому образу жизни.
+            <label>Рост, см</label>
+
+            <input
+            id="height-input"
+            type="number"
+            name="height"
+            min="1"
+            max="230"
+            value="{{ user.height if user.height else '' }}"
+            required
+            >
+
+            <label>Вес, кг</label>
+
+            <input
+            id="weight-input"
+            type="number"
+            name="weight"
+            min="1"
+            max="200"
+            value="{{ user.weight if user.weight else '' }}"
+            required
+            >
+
+                
+            <button
+            type="button"
+            class="outline-btn calculate-btn"
+            onclick="calculateProfileBmi()"
+            >
+            Рассчитать ИМТ
+            </button>
+
+            <div id="bmi-result" class="bmi-result" style="display:none;">
+
+            <div class="profile-row">
+            <span>ИМТ</span>
+            <strong id="calculated-bmi"></strong>
+            </div>
+
+            <div class="profile-row">
+            <span>Категория ИМТ</span>
+            <strong id="calculated-category"></strong>
+            </div>
+
+            </div>
+
+            <div id="goal-block" style="display:none;">
+
+            <label>Цель</label>
+
+            <select name="goal" id="goal-select" required>
+            <option value="">Выберите цель</option>
+            </select>
+
+            </div>
+
+            <div id="restrictions-block" style="display:none;">
+
+            <label>Ограничения / особенности здоровья</label>
+
+            <div class="checkbox-group">
+
+            <label class="checkbox-item">
+            <input
+            type="checkbox"
+            name="health_restrictions"
+            value="Проблемы с коленями"
+            >
+            Проблемы с коленями
+            </label>
+
+            <label class="checkbox-item">
+            <input
+            type="checkbox"
+            name="health_restrictions"
+            value="Боли в спине"
+            >
+            Боли в спине
+            </label>
+
+            <label class="checkbox-item">
+            <input
+            type="checkbox"
+            name="health_restrictions"
+            value="Сердечно-сосудистые заболевания"
+            >
+            Сердечно-сосудистые заболевания
+            </label>
+
+            </div>
+
+            <p class="profile-note">
+            При наличии иных ограничений рекомендуется консультация специалиста.
             </p>
-        </div>
 
-        <div class="feature-card">
-            <h3>ИИ-помощник</h3>
-            <p>
-                Встроенный чат помогает быстро получить ответ
-                на вопрос без перехода на другую страницу.
-            </p>
-        </div>
+            </div>
+
+            <button
+            id="save-profile-btn"
+            type="submit"
+            class="primary-btn"
+            style="display:none;"
+            >
+            Сохранить данные
+            </button>
+
+            </form>
+
+            </div>
+
+            <div class="hero-card" id="hero-card">
+
+                <h3>Как работает система?</h3>
+
+                <p>
+                    Система использует данные профиля, чтобы формировать более точные рекомендации по тренировкам и питанию.
+                </p>
+
+                <div class="info-block">
+                    <h4>Индекс массы тела</h4>
+                    <p>
+                        ИМТ помогает приблизительно оценить соответствие массы тела росту.
+                        Результат используется для определения категории ИМТ и доступных целей пользователя.        
+                    </p>
+                </div>
+
+                <div class="info-block">
+                    <h4>Цель пользователя</h4>
+                        <p>
+                        После расчёта ИМТ система показывает только доступные цели в зависимости от категории массы тела.
+                        Это помогает формировать более подходящие рекомендации по тренировкам и питанию.
+                        </p>
+                </div>
+
+                <div class="info-block">
+                    <h4>Ограничения здоровья</h4>
+                    <p>
+                        Указанные ограничения помогают учитывать особенности пользователя
+                        при подборе физических нагрузок.
+                    </p>
+                </div>
+
+            </div>
+
+            </div>
 
     </section>
 
@@ -81,6 +269,123 @@
 {% include "chat_widget.html" %}
 
 <script src="/static/js/chat.js?v=13"></script>
+
+<script>
+    const savedGoal = "{{ user.goal if user.goal else '' }}";
+
+
+
+
+    function toggleProfileForm() {
+
+        const form =
+        document.getElementById("profile-form");
+
+        const card =
+        document.getElementById("hero-card");
+
+        if(form.style.display==="none"){
+
+        form.style.display="block";
+
+        card.style.display="none";
+
+        }else{
+
+        form.style.display="none";
+
+        card.style.display="block";
+
+        }
+
+        }
+
+
+
+
+    function resetProfileCalculation() {
+    document.getElementById("bmi-result").style.display = "none";
+    document.getElementById("goal-block").style.display = "none";
+    document.getElementById("restrictions-block").style.display = "none";
+    document.getElementById("save-profile-btn").style.display = "none";
+
+    const goalSelect = document.getElementById("goal-select");
+    goalSelect.innerHTML = '<option value="">Выберите цель</option>';
+
+    document.getElementById("calculated-bmi").textContent = "";
+    document.getElementById("calculated-category").textContent = "";
+    }
+
+    function getBmiCategory(bmi) {
+        if (bmi < 18.5) {
+            return "Недостаточный вес";
+        } else if (bmi < 25) {
+            return "Нормальный вес";
+        } else if (bmi < 30) {
+            return "Избыточный вес";
+        } else {
+            return "Ожирение";
+        }
+    }
+
+    function getAvailableGoals(category) {
+        const goals = {
+            "Недостаточный вес": ["Набор массы", "Поддержание формы"],
+            "Нормальный вес": ["Снижение веса", "Набор массы", "Поддержание формы"],
+            "Избыточный вес": ["Снижение веса", "Поддержание формы"],
+            "Ожирение": ["Снижение веса"]
+        };
+
+        return goals[category] || [];
+    }
+
+    function calculateProfileBmi() {
+        const heightInput = document.getElementById("height-input");
+        const weightInput = document.getElementById("weight-input");
+
+        const height = Number(heightInput.value);
+        const weight = Number(weightInput.value);
+
+        if (!height || !weight) {
+            alert("Введите рост и вес");
+            return;
+        }
+
+        const heightM = height / 100;
+        const bmi = (weight / (heightM * heightM)).toFixed(1);
+        const category = getBmiCategory(Number(bmi));
+
+        document.getElementById("calculated-bmi").textContent = bmi;
+        document.getElementById("calculated-category").textContent = category;
+
+        document.getElementById("bmi-result").style.display = "block";
+        document.getElementById("goal-block").style.display = "block";
+        document.getElementById("restrictions-block").style.display = "block";
+        document.getElementById("save-profile-btn").style.display = "block";
+
+        const goalSelect = document.getElementById("goal-select");
+        goalSelect.innerHTML = '<option value="">Выберите цель</option>';
+
+        const availableGoals = getAvailableGoals(category);
+
+        availableGoals.forEach(function(goal) {
+            const option = document.createElement("option");
+            option.value = goal;
+            option.textContent = goal;
+
+            if (goal === savedGoal) {
+                option.selected = true;
+            }
+
+            goalSelect.appendChild(option);
+        });
+    }
+
+    document.getElementById("height-input").addEventListener("input", resetProfileCalculation);
+    document.getElementById("weight-input").addEventListener("input", resetProfileCalculation);
+
+
+</script>
 
 </body>
 </html>

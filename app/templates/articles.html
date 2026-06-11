@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Статьи | Фитнес-Помощник</title>
-
-    <link rel="stylesheet" href="/static/css/styles.css?v=34">
+    <title>Материалы | Система поддержки здорового образа жизни</title>
+    <link rel="stylesheet" href="/static/css/styles.css?v=37">
 </head>
 
 <body>
@@ -13,23 +12,19 @@
 <header class="site-header">
 
     <div class="logo">
-        Фитнес-Помощник
+        Система поддержки здорового образа жизни
     </div>
 
     <nav class="nav-menu">
 
         {% if user_role == "admin" %}
-
             <a href="/admin/articles/new">
-                Добавить статью
+                Добавить материал
             </a>
-
         {% else %}
-
             <a href="/home">
                 Главная
             </a>
-
         {% endif %}
 
         <a class="logout-button" href="/logout">
@@ -45,11 +40,11 @@
     <section class="articles-hero">
 
         <span class="hero-badge">
-            База знаний
+            Материалы системы
         </span>
 
         <h1>
-            Статьи о фитнесе, питании и здоровье
+            Материалы по физической активности, питанию и здоровому образу жизни
         </h1>
 
         <p>
@@ -77,12 +72,33 @@
                     {{ article.content[:180] }}...
                 </p>
 
-                <a
-                    class="read-button"
-                    href="/articles/{{ article.id }}"
-                >
-                    Читать статью
-                </a>
+                <div class="article-actions">
+
+                    <a
+                        class="read-button"
+                        href="/articles/{{ article.id }}"
+                    >
+                        Открыть материал
+                    </a>
+
+                    {% if user_role == "admin" %}
+
+                        <form
+                            action="/admin/articles/{{ article.id }}/delete"
+                            method="post"
+                        >
+                            <button
+                                class="delete-article-btn"
+                                type="submit"
+                                onclick="return confirm('Удалить материал?')"
+                            >
+                                Удалить
+                            </button>
+                        </form>
+
+                    {% endif %}
+
+                </div>
 
             </div>
 
@@ -95,7 +111,6 @@
 {% if user_role != "admin" %}
 
     {% include "chat_widget.html" %}
-
     <script src="/static/js/chat.js?v=30"></script>
 
 {% endif %}

@@ -11,6 +11,13 @@ class User(Base):
     password = Column(String, nullable=False)
     role = Column(String, default="user", nullable=False)
 
+    height = Column(Integer, nullable=True)
+    weight = Column(Integer, nullable=True)
+    bmi = Column(String, nullable=True)
+    bmi_category = Column(String, nullable=True)
+    goal = Column(String, nullable=True)
+    health_restrictions = Column(Text, nullable=True)
+
 
 class Article(Base):
     __tablename__ = "articles"

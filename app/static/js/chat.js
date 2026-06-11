@@ -18,11 +18,23 @@ function closeChat() {
 function renderSources(sources) {
     const container = document.createElement("div");
     container.className = "chat-sources";
-    container.innerHTML =
-        "Источники:<br>" +
-        sources
-            .map(s => `<a class="article-link" href="/articles/${s.id}" target="_blank">${s.title}</a>`)
-            .join("<br>");
+
+    const title = document.createElement("div");
+    title.className = "chat-sources-title";
+    title.textContent = "Использованные материалы:";
+
+    container.appendChild(title);
+
+    sources.forEach(source => {
+        const link = document.createElement("a");
+        link.className = "chat-source-link";
+        link.href = `/articles/${source.id}`;
+        link.target = "_blank";
+        link.textContent = `📄 ${source.title}`;
+
+        container.appendChild(link);
+    });
+
     return container;
 }
 
@@ -50,6 +62,25 @@ async function loadChatHistory() {
     }
 }
 
+
+function formatAnswer(answer) {
+    return answer
+        .trim()
+        .split("\n")
+        .filter(line => line.trim() !== "")
+        .map(line => {
+            const cleanLine = line.trim();
+
+            if (cleanLine.startsWith("•")) {
+                return `<div class="answer-list-item">${cleanLine}</div>`;
+            }
+
+            return `<p>${cleanLine}</p>`;
+        })
+        .join("");
+}
+
+
 async function sendMessage() {
     const input = document.getElementById("chatInput");
     const text = input.value.trim();
@@ -74,17 +105,39 @@ async function sendMessage() {
 
     try {
         const response = await fetch("/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text, history: chatHistory })
-        });
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        message: text,
+        history: chatHistory
+    })
+});
+
+
+        if (!response.ok) {
+            throw new Error(
+                `Ошибка сервера: ${response.status}`
+            );
+        }
+
 
         const data = await response.json();
+
+
+        if (!data || !data.answer) {
+            throw new Error(
+                "Некорректный ответ сервера"
+            );
+        }
+
+
         botMessage.textContent = "";
 
         const answerText = document.createElement("div");
         answerText.className = "rag-answer";
-        answerText.textContent = data.answer;
+        answerText.innerHTML = formatAnswer(data.answer);
         botMessage.appendChild(answerText);
 
         // Отображение источников в компактном виде

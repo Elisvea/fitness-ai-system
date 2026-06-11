@@ -378,16 +378,27 @@ body {
 
 #chatPanel {
     position: fixed;
+
     right: 30px;
+
     bottom: 30px;
-    width: 380px;
-    height: 620px;
+
+    width: min(560px, calc(100vw - 60px));
+
+    height: min(760px, calc(100vh - 60px));
+
     background: white;
+
     border-radius: 28px;
+
     box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+
     overflow: hidden;
+
     display: none;
+
     flex-direction: column;
+
     z-index: 2000;
 }
 
@@ -424,21 +435,36 @@ body {
 
 .chat-messages {
     flex: 1;
-    padding: 20px;
+
+    padding: 28px;
+
     overflow-y: auto;
+
     display: flex;
+
     flex-direction: column;
-    gap: 16px;
+
+    gap: 18px;
+
     background: #f9fafb;
+
+    line-height: 1.75;
+
+    scroll-behavior: smooth;
 }
 
 .bot-message,
 .user-message {
-    max-width: 82%;
-    padding: 14px 16px;
+    max-width: 92%;
+
+    padding: 18px 20px;
+
     border-radius: 18px;
-    line-height: 1.5;
+
+    line-height: 1.75;
+
     font-size: 15px;
+
     word-wrap: break-word;
 }
 
@@ -579,4 +605,433 @@ body {
     font-weight: normal;
     background: none;
     border: none;
+}
+
+
+.profile-section{
+display:grid;
+grid-template-columns: minmax(500px, 700px) 380px;
+gap:60px;
+align-items:start;
+padding:10px 0;
+}
+
+.profile-left{
+flex:1;
+}
+
+.profile-card{
+margin-top:18px;
+background:#ffffff;
+border:1px solid #E7EAF0;
+border-radius:24px;
+padding:28px;
+max-width:560px;
+}
+
+.profile-row{
+display:flex;
+justify-content:space-between;
+padding:18px 0;
+border-bottom:1px solid #ECECEC;
+}
+
+.profile-row:last-child{
+border-bottom:none;
+}
+
+.profile-row span{
+color:#6B7280;
+font-size:16px;
+}
+
+.profile-row strong{
+font-size:17px;
+color:#0B1F44;
+}
+
+.hero-buttons{
+display:flex;
+gap:16px;
+margin-top:24px;
+}
+
+.primary-btn{
+background:#4CAF50;
+color:white;
+border:none;
+padding:16px 28px;
+border-radius:16px;
+font-size:16px;
+cursor:pointer;
+}
+
+.outline-btn{
+background:white;
+border:1px solid #D5D9E0;
+padding:16px 28px;
+border-radius:16px;
+cursor:pointer;
+}
+
+.hero-card{
+width:100%;
+max-width:380px;
+
+background:#ffffff;
+border:1px solid #E7EAF0;
+
+border-radius:28px;
+
+padding:32px;
+
+position:sticky;
+top:120px;
+}
+
+.hero-card h3{
+margin-bottom:20px;
+}
+
+.hero-card ul{
+padding-left:20px;
+}
+
+.hero-card li{
+margin-bottom:16px;
+}
+
+@media(max-width:1100px){
+
+.profile-section{
+grid-template-columns:1fr;
+}
+
+.hero-card{
+width:100%;
+}
+
+.profile-card{
+max-width:100%;
+}
+
+}
+
+.profile-form{
+margin-top:24px;
+
+background:#ffffff;
+
+border:1px solid #E7EAF0;
+
+border-radius:24px;
+
+padding:28px;
+
+max-width:560px;
+}
+
+.profile-form form{
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+}
+
+.profile-form label{
+
+font-size:15px;
+
+font-weight:600;
+
+color:#0B1F44;
+}
+
+.profile-form input,
+.profile-form select{
+
+width:100%;
+
+padding:14px 18px;
+
+border:1px solid #D9DEE8;
+
+border-radius:14px;
+
+font-size:16px;
+
+background:white;
+}
+
+.profile-form input:focus,
+.profile-form select:focus{
+
+outline:none;
+
+border-color:#4CAF50;
+}
+
+.checkbox-group{
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+}
+
+.checkbox-item{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+font-size:16px;
+}
+
+.checkbox-item input{
+
+width:18px;
+
+height:18px;
+}
+
+.profile-note{
+
+color:#6B7280;
+
+font-size:14px;
+
+line-height:1.5;
+}
+.calculate-btn {
+    width: 100%;
+}
+
+.bmi-result {
+    margin-top: 8px;
+    padding: 18px;
+    border: 1px solid #E7EAF0;
+    border-radius: 18px;
+    background: #F9FAFB;
+}
+
+.profile-left {
+    max-width: 1180px;
+}
+
+.profile-edit-layout {
+    display: grid;
+    grid-template-columns: 560px 560px;
+    gap: 28px;
+    align-items: start;
+}
+
+.profile-form {
+    margin-top: 30px;
+}
+
+@media(max-width:1100px) {
+    .profile-edit-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.profile-edit-layout {
+    display: grid;
+    grid-template-columns: 560px 560px;
+    gap: 28px;
+    align-items: start;
+}
+
+.profile-edit-layout .profile-card,
+.profile-edit-layout .profile-form {
+    margin-top: 30px;
+}
+
+@media(max-width:1200px) {
+    .profile-edit-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.profile-right{
+
+width:560px;
+
+margin-top:30px;
+
+}
+
+.profile-form{
+
+width:100%;
+
+margin-top:0;
+
+}
+
+.bmi-main-info{
+
+margin-top:20px;
+margin-bottom:28px;
+
+padding:18px 22px;
+
+background:#F7FAF7;
+
+border:1px solid #DCE7DC;
+
+border-radius:18px;
+
+max-width:620px;
+
+}
+
+.bmi-main-info strong{
+
+display:block;
+
+margin-bottom:10px;
+
+font-size:18px;
+
+}
+
+.bmi-main-info p{
+
+margin:0;
+
+line-height:1.7;
+
+color:#64748B;
+
+}
+.hero-card p {
+    color: #64748B;
+    line-height: 1.6;
+}
+
+.info-block {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #E7EAF0;
+}
+
+.info-block h4 {
+    margin: 0 0 8px;
+    color: #0B1F44;
+    font-size: 17px;
+}
+
+.info-block p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.hero-buttons{
+margin-top:24px;
+}
+
+.rag-answer p {
+    margin: 0 0 12px;
+    line-height: 1.6;
+}
+
+.answer-list-item {
+    margin: 8px 0;
+    padding-left: 4px;
+    line-height: 1.6;
+}
+
+.chat-sources {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #E5E7EB;
+}
+
+.chat-sources-title {
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #0B1F44;
+}
+
+.chat-source-link {
+    display: block;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #F1F8F3;
+    color: #2E7D32;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.chat-source-link:hover {
+    background: #E1F2E5;
+}
+
+
+.article-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-top: 24px;
+}
+
+.article-actions form {
+    margin: 0;
+}
+
+.read-button {
+    margin-top: 0;
+}
+
+.delete-article-btn {
+    min-width: 92px;
+    height: 48px;
+
+    padding: 0 18px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: #ffefef;
+
+    color: #d93025;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    white-space: nowrap;
+
+    transition: 0.2s;
+}
+
+.delete-article-btn:hover {
+    background: #ffdcdc;
+}
+
+.delete-article-btn {
+    opacity: 0.75;
+}
+
+.delete-article-btn:hover {
+    opacity: 1;
 }
