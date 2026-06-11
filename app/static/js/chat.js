@@ -99,7 +99,7 @@ async function sendMessage() {
     // Заглушка для бота
     const botMessage = document.createElement("div");
     botMessage.className = "bot-message";
-    botMessage.textContent = "ИИ анализирует материалы...";
+    botMessage.textContent = "ИИ подготавливает ответ...";
     messages.appendChild(botMessage);
     messages.scrollTop = messages.scrollHeight;
 

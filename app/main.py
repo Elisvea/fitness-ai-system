@@ -914,14 +914,15 @@ def define_response_mode(message: str):
     nutrition_words = [
         "питани", "питат", "рацион", "еда",
         "есть", "калор", "белок", "углевод",
-        "жир", "вода", "продукт", "употреб"
+        "жир", "вод", "пить", "продукт", "употреб" 
     ]
 
     full_words = [
-        "что делать", "что надо", "что необходимо",
-        "рекомендац", "поддерживать форму",
-        "поддержания формы", "здоровый образ жизни",
-        "образ жизни"
+    "что делать", "что надо", "что необходимо",
+    "что мне подходит", "что подходит", "подходит",
+    "рекомендац", "поддерживать форму",
+    "поддержания формы", "здоровый образ жизни",
+    "образ жизни"
     ]
 
     has_exercise = any(word in message_lower for word in exercise_words)
@@ -957,6 +958,61 @@ def get_requested_goal(message: str):
 
     return None
 
+def define_request_type(message: str):
+    message_lower = message.lower()
+
+    explanation_words = [
+        "что такое",
+        "что значит",
+        "объясни",
+        "почему",
+        "зачем",
+        "расскажи про",
+        "расскажи о",
+        "в чем смысл",
+        "что означает",
+        "что это",
+        "это что",
+        "что значит",
+        "что означает",
+        "объясни",
+        "поясни",
+        "чем отличается",
+        "в чем отличие",
+        "какая разница",
+        "отличие между",
+        "чем отличается от",
+        "отличается",
+        "отличие",
+        "разница",
+        "в какой еде",
+        "в каких продуктах",
+        "где содерж",
+        "где есть",
+        "содержится",
+        "содержат"
+    ]
+
+    recommendation_words = [
+        "посовет",
+        "рекоменд",
+        "подходит",
+        "подходят",
+        "что делать",
+        "что надо",
+        "что необходимо",
+        "какие упражнения",
+        "какие нагрузки",
+        "какое питание"
+    ]
+
+    if any(word in message_lower for word in explanation_words):
+        return "explanation"
+
+    if any(word in message_lower for word in recommendation_words):
+        return "recommendation"
+
+    return "recommendation"
 
 @app.post("/chat")
 async def chat(request: Request, chat_request: ChatRequest):
@@ -1075,12 +1131,24 @@ async def chat(request: Request, chat_request: ChatRequest):
         ]
 
         response_mode = define_response_mode(chat_request.message)
+        request_type = define_request_type(chat_request.message)
 
         if response_mode == "unknown":
             answer = (
                 "Я могу отвечать только на вопросы, связанные с физической активностью, "
                 "упражнениями и подходящим питанием."
             )
+            found_articles = []
+
+        elif request_type == "explanation":
+            answer = generate_answer_with_context(
+                chat_request.message,
+                [],
+                []
+            )
+
+            found_articles = []
+
         else:
             answer = build_personal_recommendation(
                 articles[0].content,
