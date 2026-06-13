@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.database import engine, SessionLocal
-from app.models import Base, User, Article
+from app.models import Base, User, Article, ChatMessageModel
 
 from app.services.rag_service import search_articles_by_question
 from app.services.ai_service import generate_answer_with_context
@@ -51,14 +51,16 @@ class ChatRequest(BaseModel):
     history: list[ChatMessage] = []
 
 
+
+
 @app.get("/")
+@app.get("/login")
 async def login_page(request: Request):
     return templates.TemplateResponse(
         name="login.html",
         request=request,
         context={}
     )
-
 
 @app.post("/login")
 async def login_user(
@@ -77,6 +79,7 @@ async def login_user(
         .first()
     )
 
+
     db.close()
 
     if user:
@@ -94,7 +97,8 @@ async def login_user(
         name="login.html",
         request=request,
         context={
-            "error_message": "Неверный логин или пароль. Проверьте данные и попробуйте снова."
+            "error_message": "Неверный логин или пароль. Проверьте данные и попробуйте снова.",
+            "username": username
         }
     )
 
@@ -266,10 +270,10 @@ async def update_profile(
             db.close()
             return RedirectResponse(url="/home", status_code=303)
 
-            bmi = calculate_bmi(height, weight)
-            bmi_category = get_bmi_category(bmi)
+        bmi = calculate_bmi(height, weight)
+        bmi_category = get_bmi_category(bmi)
 
-            available_goals = get_available_goals(bmi_category)
+        available_goals = get_available_goals(bmi_category)
 
         if goal not in available_goals:
             goal = None
@@ -790,7 +794,26 @@ def filter_limitations_block(block: str, user_restrictions: str):
     return clean_markdown("\n".join(result))
 
 
-def build_personal_recommendation(article_content: str, user_restrictions: str, response_mode: str):
+def build_personal_recommendation(
+    article_content: str,
+    user_restrictions: str,
+    response_mode: str,
+    bmi_category: str,
+    goal: str
+):
+
+
+    restrictions_text = (
+        user_restrictions
+        if user_restrictions
+        else "отсутствуют"
+    )
+    
+    answer_parts = [
+        f"Рекомендации сформированы для категории ИМТ «{bmi_category}», "
+        f"выбранной цели «{goal}» и ограничений здоровья: {restrictions_text}."
+    ]
+
     selected_restrictions = []
 
     if user_restrictions:
@@ -843,8 +866,8 @@ def build_personal_recommendation(article_content: str, user_restrictions: str, 
         "Рекомендации по питанию",
         ["Вывод"]
     )
+    
 
-    answer_parts = []
 
     if loads_block and response_mode in ["exercise", "full"]:
         lines = loads_block.splitlines()
@@ -934,26 +957,48 @@ def build_personal_recommendation(article_content: str, user_restrictions: str, 
 def define_response_mode(message: str):
     message_lower = message.lower()
 
+    offtopic_words = [
+        "город",
+        "страна",
+        "франц",
+        "швейцар",
+        "кот",
+        "собак",
+
+        "рецепт",
+        "приготов",
+        "салат",
+        "суп",
+        "блюдо",
+        "меню"
+    ]
+
+    if any(word in message_lower for word in offtopic_words):
+        return "unknown"
+
     exercise_words = [
-        "упраж", "трениров", "нагруз", "нагруж",
-        "заним", "занят", "кардио", "силов",
-        "ходьб", "бег", "плаван", "велотренаж",
-        "эллипс", "гимнаст"
+    "упраж",
+    "трениров",
+    "нагруз",
+    "кардио",
+    "силов"
     ]
 
     nutrition_words = [
-        "питани", "питат", "рацион", "еда",
-        "есть", "калор", "белок", "углевод",
-        "жир", "вод", "пить", "продукт", "употреб" 
+    "питани",
+    "рацион"
     ]
 
     full_words = [
-    "что делать", "что надо", "что необходимо",
-    "что мне подходит", "что подходит", "подходит",
-    "рекомендац", "поддерживать форму",
-    "поддержания формы", "здоровый образ жизни",
-    "образ жизни"
+    "питание и тренировки",
+    "тренировки и питание",
+    "упражнения и питание",
+    "питание и упражнения",
+    "нагрузки и питание",
+    "питание и нагрузки"
     ]
+
+
 
     has_exercise = any(word in message_lower for word in exercise_words)
     has_nutrition = any(word in message_lower for word in nutrition_words)
@@ -971,6 +1016,12 @@ def define_response_mode(message: str):
     if has_full:
         return "full"
 
+    # fallback через модель
+    llm_result = classify_with_llm(message)
+
+    if llm_result in ["exercise", "nutrition", "full"]:
+        return llm_result
+
     return "unknown"
 
 
@@ -983,7 +1034,7 @@ def get_requested_goal(message: str):
     if any(word in message_lower for word in ["набрать массу", "набор массы", "набрать вес"]):
         return "Набор массы"
 
-    if any(word in message_lower for word in ["поддерживать форму", "поддержание формы", "поддержания формы"]):
+    if any(word in message_lower for word in ["поддерживать форму", "поддержание формы", "поддержания формы", "поддержать форму"]):
         return "Поддержание формы"
 
     return None
@@ -1036,7 +1087,6 @@ def define_request_type(message: str):
     recommendation_words = [
         "посовет",
         "рекоменд",
-        "подходит",
         "подойдет",
         "подходят",
         "что делать",
@@ -1055,11 +1105,58 @@ def define_request_type(message: str):
 
     return "recommendation"
 
+
+
+def classify_with_llm(message: str):
+    from app.services.ai_service import client, MODEL_NAME
+
+    prompt = f"""
+
+Ты — классификатор запросов системы по фитнесу.
+
+ВАЖНО:
+"full" = если пользователь спрашивает про цель:
+- набор массы
+- похудение
+- поддержание формы
+- общие рекомендации
+
+Категории:
+- exercise → только тренировки
+- nutrition → только питание
+- full → цель / общие рекомендации / смешанные запросы
+- unknown → не по теме
+
+Запрос:
+{message}
+
+Ответ только одним словом.
+"""
+
+    try:
+        response = client.chat(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            options={"temperature": 0}
+        )
+
+        result = response["message"]["content"].strip().lower()
+
+        if result in ["exercise", "nutrition", "full"]:
+            return result
+
+    except Exception:
+        pass
+
+    return "unknown"
+
+
 @app.post("/chat")
 async def chat(request: Request, chat_request: ChatRequest):
     db = SessionLocal()
 
     username = request.cookies.get("username")
+    print("USERNAME =", username)
 
     user = (
         db.query(User)
@@ -1097,6 +1194,7 @@ async def chat(request: Request, chat_request: ChatRequest):
                 "articles": []
             }
 
+            
         db.close()
 
         return {
@@ -1171,6 +1269,8 @@ async def chat(request: Request, chat_request: ChatRequest):
             for article in articles
         ]
 
+
+
         response_mode = define_response_mode(chat_request.message)
         request_type = define_request_type(chat_request.message)
 
@@ -1194,10 +1294,29 @@ async def chat(request: Request, chat_request: ChatRequest):
             answer = build_personal_recommendation(
                 articles[0].content,
                 user.health_restrictions,
-                response_mode
+                response_mode,
+                user.bmi_category,
+                user.goal
             )
     else:
         answer = "Информация не найдена по вашему запросу."
+
+
+
+    if username:
+        db.add(ChatMessageModel(
+            username=username,
+            role="user",
+            content=chat_request.message
+        ))
+
+        db.add(ChatMessageModel(
+            username=username,
+            role="assistant",
+            content=answer
+        ))
+
+        db.commit()
 
     db.close()
 
@@ -1206,6 +1325,50 @@ async def chat(request: Request, chat_request: ChatRequest):
         "answer": answer,
         "articles": found_articles
     }
+
+
+
+@app.get("/chat/history")
+async def get_chat_history(request: Request):
+    username = request.cookies.get("username")
+
+    db = SessionLocal()
+
+    messages = (
+        db.query(ChatMessageModel)
+        .filter(ChatMessageModel.username == username)
+        .order_by(ChatMessageModel.created_at.asc())
+        .all()
+    )
+
+    db.close()
+
+    return {
+        "messages": [
+            {
+                "role": message.role,
+                "content": message.content
+            }
+            for message in messages
+        ]
+    }
+
+
+@app.post("/chat/history/clear")
+async def clear_chat_history(request: Request):
+    username = request.cookies.get("username")
+
+    db = SessionLocal()
+
+    db.query(ChatMessageModel).filter(
+        ChatMessageModel.username == username
+    ).delete()
+
+    db.commit()
+    db.close()
+
+    return {"success": True}
+
 
 
 @app.get("/admin/articles/new")

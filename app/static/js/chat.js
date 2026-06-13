@@ -42,17 +42,44 @@ function renderSources(sources) {
 async function loadChatHistory() {
     try {
         const response = await fetch("/chat/history");
-        const history = await response.json();
+        const data = await response.json();
 
-        chatHistory = history.slice(-20); // максимум 20 последних сообщений
+        chatHistory = data.messages.slice(-20);
 
         const messages = document.getElementById("chatMessages");
         messages.innerHTML = "";
 
+        if (chatHistory.length === 0) {
+            const welcomeMessage = document.createElement("div");
+            welcomeMessage.className = "bot-message";
+            welcomeMessage.innerHTML = `
+            Здравствуйте! Я являюсь ИИ-ассистентом системы поддержки здорового образа жизни.
+
+            <br><br>
+
+            Рекомендации формируются на основе материалов системы и данных вашего профиля: категории ИМТ, выбранной цели и ограничений здоровья.
+
+            <br><br>
+
+            При необходимости я также могу кратко объяснить отдельные вопросы по теме физической активности и питания.
+            `;
+            messages.appendChild(welcomeMessage);
+            return;
+        }
+
         chatHistory.forEach(msg => {
             const div = document.createElement("div");
             div.className = msg.role === "user" ? "user-message" : "bot-message";
-            div.textContent = msg.content;
+
+            if (msg.role === "assistant") {
+                const answerText = document.createElement("div");
+                answerText.className = "rag-answer";
+                answerText.innerHTML = formatAnswer(msg.content);
+                div.appendChild(answerText);
+            } else {
+                div.textContent = msg.content;
+            }
+
             messages.appendChild(div);
         });
 
@@ -62,6 +89,37 @@ async function loadChatHistory() {
     }
 }
 
+
+
+async function clearChatHistory() {
+   if (!confirm("История чата будет удалена только для текущего пользователя. Продолжить?")) {
+        return;
+    }
+
+    await fetch("/chat/history/clear", {
+        method: "POST"
+    });
+
+    chatHistory = [];
+
+    const messages = document.getElementById("chatMessages");
+    messages.innerHTML = "";
+
+    const welcomeMessage = document.createElement("div");
+    welcomeMessage.className = "bot-message";
+    welcomeMessage.innerHTML = `
+    Здравствуйте! Я являюсь ИИ-ассистентом системы поддержки здорового образа жизни.
+
+    <br><br>
+
+    Рекомендации формируются на основе материалов системы и данных вашего профиля: категории ИМТ, выбранной цели и ограничений здоровья.
+
+    <br><br>
+
+    При необходимости я также могу кратко объяснить отдельные вопросы по теме физической активности и питания.
+    `;
+    messages.appendChild(welcomeMessage);
+}
 
 function formatAnswer(answer) {
     return answer
@@ -168,9 +226,9 @@ async function sendMessage() {
     }
 }
 
-// Отправка сообщения по Enter
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("chatInput");
+
     if (input) {
         input.addEventListener("keydown", (event) => {
             if (event.key === "Enter") {

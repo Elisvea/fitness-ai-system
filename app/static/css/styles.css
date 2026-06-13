@@ -773,42 +773,53 @@ border-color:#4CAF50;
 }
 
 .checkbox-group{
+    display:flex;
+    flex-direction:column;
 
-display:flex;
+    gap:10px;
 
-flex-direction:column;
-
-gap:12px;
+    margin-top:12px;
 }
 
 .checkbox-item{
+    display:flex;
+    align-items:center;
 
-display:flex;
+    gap:10px;
 
-align-items:center;
+    margin:0;
 
-gap:10px;
+    font-size:16px;
+    font-weight:600;
 
-font-size:16px;
+    color:#00143F;
+
+    cursor:pointer;
 }
 
 .checkbox-item input{
+    width:17px;
+    height:17px;
 
-width:18px;
+    margin:0;
 
-height:18px;
+    flex-shrink:0;
+
+    accent-color:#4CAF50;
 }
 
 .profile-note{
+    color:#6B7280;
 
-color:#6B7280;
+    font-size:14px;
 
-font-size:14px;
+    line-height:1.5;
 
-line-height:1.5;
+    margin-top:14px;
 }
-.calculate-btn {
-    width: 100%;
+
+.calculate-btn{
+    width:100%;
 }
 
 .bmi-result {
@@ -1066,4 +1077,94 @@ margin-top:24px;
     font-weight:700;
 
     letter-spacing:0.2px;
+}
+
+
+.error-message{
+    color:#d93025;
+    margin-top:10px;
+    text-align:center;
+}
+
+.chat-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.clear-chat-button{
+    background:transparent;
+    border:1px solid rgba(255,255,255,.6);
+    color:white;
+    padding:6px 12px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.clear-chat-button:hover{
+    background:rgba(255,255,255,.15);
+}
+
+.bot-message{
+    line-height: 1.7;
+}
+
+
+#chatPanel{
+    display: none;
+    flex-direction: column;
+}
+
+#chatPanel.show{
+    display: flex;
+}
+
+.chat-header{
+    flex-shrink: 0;
+}
+
+.chat-messages{
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.chat-input-area{
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+
+clear-chat-btn
+
+.chat-header-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+
+.profile-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.profile-row span {
+    color: #68748a;
+}
+
+.profile-row strong {
+    text-align: right;
+    line-height: 1.4;
+    word-break: normal;
+}
+
+.restrictions-text {
+    max-width: 320px;
+    margin-left: auto;
 }

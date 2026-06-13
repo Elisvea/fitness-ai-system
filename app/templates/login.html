@@ -3,15 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Вход | Фитнес-Помощник</title>
-    <link rel="stylesheet" href="/static/css/styles.css?v=11">
+    <title>Вход | Система поддержки здорового образа жизни</title>
+    <link rel="stylesheet" href="/static/css/styles.css?v=12">
 </head>
 
 <body>
 
 <div class="login-container">
 
-    <h1>Фитнес-Помощник</h1>
+    <h1>Система поддержки здорового образа жизни</h1>
 
     <p>Войдите в систему</p>
 
@@ -21,6 +21,7 @@
             type="text"
             name="username"
             placeholder="Введите логин"
+            value="{{ username if username else '' }}"
             required
         >
 
@@ -32,6 +33,12 @@
         >
 
         <button type="submit">Войти</button>
+
+        {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+        {% endif %}
 
     </form>
 

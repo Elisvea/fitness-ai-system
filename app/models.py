@@ -31,7 +31,7 @@ class ChatMessageModel(Base):
     __tablename__ = "chat_messages"
 
     id = Column(Integer, primary_key=True)
-    username = Column(String(50))        # username пользователя
-    role = Column(String(20))            # "user" или "assistant"
-    content = Column(Text)               # текст сообщения
+    username = Column(String(50))        
+    role = Column(String(20))            
+    content = Column(Text)               
     created_at = Column(DateTime(timezone=True), server_default=func.now())

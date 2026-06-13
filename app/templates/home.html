@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Главная | Система поддержки здорового образа жизни</title>
-    <link rel="stylesheet" href="/static/css/styles.css?v=28">
+    <link rel="stylesheet" href="/static/css/styles.css?v=35">
 </head>
 
 <body>
@@ -81,7 +81,7 @@
 
                     <div class="profile-row">
                         <span>Ограничения</span>
-                        <strong>
+                        <strong class="restrictions-text">
                             {{ user.health_restrictions if user.health_restrictions else "Отсутствуют" }}
                         </strong>
                     </div>
@@ -185,6 +185,9 @@
             type="checkbox"
             name="health_restrictions"
             value="Проблемы с коленями"
+            {% if user.health_restrictions and "Проблемы с коленями" in user.health_restrictions %}
+            checked
+            {% endif %}
             >
             Проблемы с коленями
             </label>
@@ -194,6 +197,9 @@
             type="checkbox"
             name="health_restrictions"
             value="Боли в спине"
+            {% if user.health_restrictions and "Боли в спине" in user.health_restrictions %}
+            checked
+            {% endif %}
             >
             Боли в спине
             </label>
@@ -203,6 +209,9 @@
             type="checkbox"
             name="health_restrictions"
             value="Сердечно-сосудистые заболевания"
+            {% if user.health_restrictions and "Сердечно-сосудистые заболевания" in user.health_restrictions %}
+            checked
+            {% endif %}
             >
             Сердечно-сосудистые заболевания
             </label>
@@ -246,7 +255,7 @@
                     </p>
 
                     <div class="bmi-formula">
-                        ИМТ = вес (кг) / рост² (м²)
+                        ИМТ = вес (кг) / рост² (м)
                     </div>
 
                 </div>
@@ -308,9 +317,6 @@
         }
 
         }
-
-
-
 
     function resetProfileCalculation() {
     document.getElementById("bmi-result").style.display = "none";
