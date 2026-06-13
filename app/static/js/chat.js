@@ -14,6 +14,9 @@ function closeChat() {
     document.getElementById("openChatButton").style.display = "block";
 }
 
+
+
+
 // Компактные текстовые ссылки на статьи
 function renderSources(sources) {
     const container = document.createElement("div");
@@ -52,16 +55,12 @@ async function loadChatHistory() {
         if (chatHistory.length === 0) {
             const welcomeMessage = document.createElement("div");
             welcomeMessage.className = "bot-message";
-            welcomeMessage.innerHTML = `
-            Здравствуйте! Я являюсь ИИ-ассистентом системы поддержки здорового образа жизни.
-
-            <br><br>
-
-            Рекомендации формируются на основе материалов системы и данных вашего профиля: категории ИМТ, выбранной цели и ограничений здоровья.
-
-            <br><br>
-
-            При необходимости я также могу кратко объяснить отдельные вопросы по теме физической активности и питания.
+           welcomeMessage.innerHTML = `
+            <div class="rag-answer welcome-answer">
+                <p>Здравствуйте! Я являюсь ИИ-ассистентом системы поддержки здорового образа жизни.</p>
+                <p>Рекомендации формируются на основе материалов системы и данных вашего профиля: категории ИМТ, выбранной цели и ограничений здоровья.</p>
+                <p>При необходимости я также могу кратко объяснить отдельные вопросы по теме физической активности и питания.</p>
+            </div>
             `;
             messages.appendChild(welcomeMessage);
             return;
@@ -108,16 +107,13 @@ async function clearChatHistory() {
     const welcomeMessage = document.createElement("div");
     welcomeMessage.className = "bot-message";
     welcomeMessage.innerHTML = `
-    Здравствуйте! Я являюсь ИИ-ассистентом системы поддержки здорового образа жизни.
-
-    <br><br>
-
-    Рекомендации формируются на основе материалов системы и данных вашего профиля: категории ИМТ, выбранной цели и ограничений здоровья.
-
-    <br><br>
-
-    При необходимости я также могу кратко объяснить отдельные вопросы по теме физической активности и питания.
+    <div class="rag-answer welcome-answer">
+        <p>Здравствуйте! Я являюсь ИИ-ассистентом системы поддержки здорового образа жизни.</p>
+        <p>Рекомендации формируются на основе материалов системы и данных вашего профиля: категории ИМТ, выбранной цели и ограничений здоровья.</p>
+        <p>При необходимости я также могу кратко объяснить отдельные вопросы по теме физической активности и питания.</p>
+    </div>
     `;
+
     messages.appendChild(welcomeMessage);
 }
 
@@ -129,8 +125,21 @@ function formatAnswer(answer) {
         .map(line => {
             const cleanLine = line.trim();
 
+            if (cleanLine.startsWith("Представленные рекомендации")) {
+                return `<div class="answer-final-note">${cleanLine}</div>`;
+            }
+
             if (cleanLine.startsWith("•")) {
                 return `<div class="answer-list-item">${cleanLine}</div>`;
+            }
+
+            if (
+                cleanLine.endsWith(":") ||
+                cleanLine.startsWith("Нагрузка:") ||
+                cleanLine.startsWith("Описание:") ||
+                cleanLine.startsWith("Упражнения:")
+            ) {
+                return `<div class="answer-title">${cleanLine}</div>`;
             }
 
             return `<p>${cleanLine}</p>`;

@@ -168,12 +168,14 @@ async def register_user(
     if existing_user:
         db.close()
 
+        context["username_error"] = (
+            "Пользователь с таким логином уже существует"
+        )
+
         return templates.TemplateResponse(
             name="register.html",
             request=request,
-            context={
-                "error_message": "Пользователь с таким логином уже существует"
-            }
+            context=context
         )
 
     new_user = User(
@@ -809,10 +811,20 @@ def build_personal_recommendation(
         else "отсутствуют"
     )
     
-    answer_parts = [
-        f"Рекомендации сформированы для категории ИМТ «{bmi_category}», "
-        f"выбранной цели «{goal}» и ограничений здоровья: {restrictions_text}."
-    ]
+    if response_mode == "nutrition":
+        answer_parts = [
+            (
+                f"Рекомендации сформированы для категории ИМТ «{bmi_category}» "
+                f"и выбранной цели «{goal}»."
+            )
+        ]
+    else:
+        answer_parts = [
+            (
+                f"Рекомендации сформированы для категории ИМТ «{bmi_category}», "
+                f"выбранной цели «{goal}» и ограничений здоровья: {user_restrictions}."
+            )
+        ]
 
     selected_restrictions = []
 

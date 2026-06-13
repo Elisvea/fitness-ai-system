@@ -953,8 +953,8 @@ margin-top:24px;
 }
 
 .answer-list-item {
-    margin: 8px 0;
-    padding-left: 4px;
+    margin: 6px 0;
+    padding-left: 6px;
     line-height: 1.6;
 }
 
@@ -1167,4 +1167,818 @@ clear-chat-btn
 .restrictions-text {
     max-width: 320px;
     margin-left: auto;
+}
+
+/* ===== Новая цветовая схема: мятный + синий ===== */
+
+:root{
+    --bg:#F6F8F5;
+    --primary:#9EC980;
+    --primary-hover:#8BBB6B;
+    --secondary:#3C5185;
+    --soft:#CEDFCC;
+    --text:#1F2937;
+    --text-light:#64748B;
+    --border:#E6ECE5;
+    --shadow:0 18px 45px rgba(60,81,133,.10);
+}
+
+body{
+    background:linear-gradient(180deg, var(--bg) 0%, #FFFFFF 100%);
+    color:var(--text);
+}
+
+.site-header{
+    background:rgba(255,255,255,.9);
+    border-bottom:1px solid var(--border);
+}
+
+.logo,
+h1,h2,h3,
+.info-block h4,
+.profile-row strong,
+.chat-sources-title{
+    color:var(--secondary);
+}
+
+.hero-badge,
+.category{
+    background:var(--soft);
+    color:var(--secondary);
+}
+
+.profile-card,
+.profile-form,
+.hero-card,
+.feature-card,
+.article-card,
+.article-detail-card,
+.bmi-result,
+.bmi-main-info{
+    background:#FFFFFF;
+    border:1px solid var(--border);
+    border-radius:28px;
+    box-shadow:var(--shadow);
+}
+
+.profile-card,
+.profile-form{
+    padding:32px;
+}
+
+.profile-row{
+    border-bottom:1px solid var(--border);
+}
+
+.profile-row span,
+.hero-text p,
+.feature-card p,
+.article-card p,
+.hero-card p,
+.bmi-main-info p{
+    color:var(--text-light);
+}
+
+.primary-btn,
+.read-button,
+.login-container button,
+.chat-input-area button,
+#openChatButton,
+.calculate-btn{
+    background:var(--primary);
+    color:white;
+    border:none;
+    box-shadow:0 12px 28px rgba(158,201,128,.35);
+}
+
+.primary-btn:hover,
+.read-button:hover,
+.login-container button:hover,
+.chat-input-area button:hover,
+#openChatButton:hover,
+.calculate-btn:hover{
+    background:var(--primary-hover);
+    transform:translateY(-1px);
+}
+
+.outline-btn,
+.logout-button{
+    background:#F7FAF7;
+    color:var(--secondary);
+    border:1px solid var(--border);
+}
+
+.profile-form input:focus,
+.profile-form select:focus,
+.chat-input-area input:focus,
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 4px rgba(158,201,128,.22);
+}
+
+.checkbox-item input{
+    accent-color:var(--primary);
+}
+
+.bmi-formula{
+    background:#F7FAF7;
+    border:1px solid var(--border);
+    color:var(--secondary);
+}
+
+#chatPanel{
+    border-radius:32px;
+    box-shadow:0 24px 60px rgba(60,81,133,.22);
+}
+
+.chat-header{
+    background:linear-gradient(135deg, var(--primary), var(--primary-hover));
+    color:white;
+}
+
+.chat-messages{
+    background:#F6F8F5;
+}
+
+.user-message{
+    background:var(--primary);
+    color:white;
+    border-radius:22px;
+}
+
+.bot-message{
+    background:white;
+    color:var(--text);
+    border:1px solid var(--border);
+    border-radius:22px;
+}
+
+.article-link,
+.bot-message a,
+.chat-source-link{
+    color:var(--secondary);
+}
+
+.chat-source-link,
+.article-icon{
+    background:var(--soft);
+}
+
+.chat-source-link:hover{
+    background:#BED7BA;
+}
+
+.clear-chat-button{
+    border:1px solid rgba(255,255,255,.75);
+    color:white;
+}
+
+
+/* ===== Финальная корректировка размеров ===== */
+
+.login-container{
+    margin: 90px auto;
+    width: 430px;
+    padding: 44px;
+}
+
+.login-container input{
+    background:#F4F9FF;
+    border:1px solid #C9D5E2;
+}
+
+.home-page{
+    padding-top:55px;
+}
+
+.profile-section{
+    grid-template-columns: 620px 390px;
+    gap: 80px;
+}
+
+.profile-card{
+    max-width: 560px;
+}
+
+.hero-card{
+    max-width: 390px;
+}
+
+#chatPanel{
+    width: min(520px, calc(100vw - 60px));
+    height: min(700px, calc(100vh - 60px));
+}
+
+.chat-header{
+    padding: 20px 24px;
+}
+
+.chat-header h3{
+    font-size: 18px;
+    line-height: 1.25;
+}
+
+.chat-messages{
+    padding: 26px;
+}
+
+.bot-message,
+.user-message{
+    max-width: 88%;
+    font-size: 15px;
+}
+
+/* ===== Перераспределение цветов ===== */
+
+body{
+background:#F7F8F6;
+}
+
+/* шапка */
+
+.site-header{
+background:white;
+}
+
+/* бейдж */
+
+.hero-badge{
+background:#CEDFCC;
+color:#3C5185;
+}
+
+/* карточки */
+
+.profile-card,
+.profile-form,
+.hero-card,
+.article-card,
+.article-detail-card{
+
+background:white;
+
+border:1px solid #DCE3E8;
+
+box-shadow:
+0 18px 45px
+rgba(60,81,133,.08);
+}
+
+/* заголовки */
+
+.logo,
+h1,
+h2,
+h3,
+.info-block h4,
+.profile-row strong{
+
+color:#3C5185;
+}
+
+/* обычный текст */
+
+.hero-text p,
+.hero-card p,
+.profile-row span{
+
+color:#64748B;
+}
+
+/* кнопки — зелёные */
+
+.primary-btn,
+.read-button,
+.calculate-btn,
+.chat-input-area button{
+
+background:#9EC980;
+
+box-shadow:
+0 10px 24px
+rgba(158,201,128,.35);
+}
+
+.primary-btn:hover,
+.read-button:hover,
+.calculate-btn:hover,
+.chat-input-area button:hover{
+
+background:#89BC69;
+}
+
+/* ЧАТ */
+
+.chat-header{
+
+background:#3C5185;
+
+color:white;
+}
+
+/* сообщение пользователя */
+
+.user-message{
+
+background:#9EC980;
+
+color:white;
+}
+
+/* сообщение ИИ */
+
+.bot-message{
+
+background:white;
+
+border:1px solid #E6EBEF;
+}
+
+/* формула ИМТ */
+
+.bmi-formula{
+
+background:#CEDFCC;
+
+color:#3C5185;
+
+border:none;
+}
+
+/* поля */
+
+input,
+select,
+textarea{
+
+background:#FAFBFC;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+
+border-color:#3C5185;
+
+box-shadow:
+0 0 0 4px
+rgba(60,81,133,.12);
+}
+
+/* ===== Уточнение цветовых акцентов ===== */
+
+.chat-header{
+    background:#3C5185;
+}
+
+.chat-header h3{
+    color:white;
+}
+
+.hero-badge,
+.bmi-formula{
+    background:#CEDFCC;
+    color:#3C5185;
+}
+
+.primary-btn,
+.user-message,
+.chat-input-area button,
+#openChatButton{
+    background:#9EC980;
+    color:white;
+}
+
+.primary-btn:hover,
+.chat-input-area button:hover,
+#openChatButton:hover{
+    background:#86B96B;
+}
+
+.profile-card,
+.hero-card,
+#chatPanel{
+    border:1px solid #D8E0EA;
+}
+
+.chat-messages{
+    background:#F7F8F6;
+}
+
+.bot-message{
+    background:white;
+    border:1px solid #DDE5EC;
+}
+
+.profile-row strong,
+.logo,
+h1,h2,h3{
+    color:#3C5185;
+}
+
+
+/* ===== Красивое оформление ответа ИИ ===== */
+
+.rag-answer{
+    font-size:16px;
+
+    line-height:1.9;
+
+    color:#24324D;
+}
+
+/* абзацы */
+
+.rag-answer p{
+    margin:0 0 18px;
+}
+
+/* списки */
+
+.rag-answer ul{
+    margin:12px 0 22px;
+
+    padding-left:22px;
+}
+
+.rag-answer li{
+
+    margin-bottom:10px;
+
+    line-height:1.8;
+}
+
+/* выделение разделов */
+
+.rag-answer strong{
+
+    display:block;
+
+    margin-top:20px;
+
+    margin-bottom:10px;
+
+    color:#3C5185;
+
+    font-size:17px;
+
+    font-weight:700;
+}
+
+/* первый блок */
+
+.bot-message{
+
+    padding:28px;
+
+    line-height:1.9;
+}
+
+/* разделители */
+
+.rag-answer br{
+    display:block;
+
+    content:"";
+
+    margin-bottom:10px;
+}
+
+/* ===== Красивое, но компактное оформление ответа ИИ ===== */
+
+.rag-answer{
+    font-size:15px;
+    line-height:1.65;
+    color:#24324D;
+}
+
+.rag-answer p{
+    margin:0 0 10px;
+}
+
+.rag-answer ul{
+    margin:6px 0 12px;
+    padding-left:20px;
+}
+
+.rag-answer li{
+    margin-bottom:4px;
+    line-height:1.6;
+}
+
+.rag-answer strong{
+    display:block;
+    margin-top:14px;
+    margin-bottom:6px;
+    color:#3C5185;
+    font-size:15px;
+    font-weight:700;
+}
+
+.bot-message{
+    padding:22px 24px;
+    line-height:1.65;
+}
+
+.rag-answer br{
+    display:none;
+}
+
+/* ===== Улучшение читаемости ответа ===== */
+
+.bot-message{
+
+background:#FFFFFF;
+
+border:1px solid #E6EBEF;
+
+border-radius:26px;
+
+padding:26px;
+
+box-shadow:
+0 10px 24px rgba(60,81,133,.05);
+
+line-height:1.75;
+}
+
+/* интервалы */
+
+.bot-message p{
+
+margin:0 0 12px;
+}
+
+/* имитация заголовков */
+
+.bot-message{
+    white-space: normal;
+}
+
+/* списки */
+
+.bot-message ul{
+
+padding-left:18px;
+
+margin:8px 0 14px;
+}
+
+.bot-message li{
+
+margin-bottom:8px;
+}
+
+/* сделать начало чуть выразительнее */
+
+.bot-message:first-child{
+
+font-size:15px;
+}
+
+.welcome-answer p{
+    margin:0 0 14px;
+    line-height:1.6;
+}
+
+.welcome-answer p:last-child{
+    margin-bottom:0;
+}
+
+.welcome-answer{
+    white-space: normal;
+}
+
+.welcome-answer p{
+    margin:0 0 12px;
+    line-height:1.55;
+}
+
+.welcome-answer p:last-child{
+    margin-bottom:0;
+}
+
+/* ===== Увеличенный чат ===== */
+
+#chatPanel{
+
+width:min(700px, calc(100vw - 50px));
+
+height:min(860px, calc(100vh - 40px));
+
+right:20px;
+
+bottom:20px;
+
+border-radius:34px;
+}
+
+/* область сообщений */
+
+.chat-messages{
+
+padding:24px 30px;
+}
+
+/* сообщение */
+
+.bot-message,
+.user-message{
+
+max-width:96%;
+
+padding:24px 28px;
+}
+
+/* ввод */
+
+.chat-input-area{
+
+padding:18px 20px;
+}
+
+.chat-input-area input{
+
+height:56px;
+
+font-size:16px;
+}
+
+/* адаптация */
+
+@media(max-width:900px){
+
+#chatPanel{
+
+width:100%;
+
+height:100%;
+
+right:0;
+
+bottom:0;
+
+border-radius:0;
+}
+
+}
+
+/* ===== Красивые интервалы в ответе ===== */
+
+.rag-answer{
+    line-height:1.7;
+}
+
+/* обычые строки */
+
+.rag-answer p{
+
+margin:0 0 12px;
+}
+
+/* разделы */
+
+.answer-title{
+
+display:block;
+
+margin-top:22px;
+
+margin-bottom:10px;
+
+font-weight:600;
+
+color:#3C5185;
+
+font-size:16px;
+}
+
+/* списки */
+
+.answer-list-item{
+
+margin-left:18px;
+
+margin-top:6px;
+
+margin-bottom:6px;
+
+line-height:1.7;
+}
+
+/* после списка */
+
+.answer-list-item + .answer-title{
+
+margin-top:20px;
+}
+
+/* большие смысловые блоки */
+
+.rag-answer p + .answer-title{
+
+margin-top:22px;
+}
+
+
+/* только отступ перед дисклеймером */
+
+.chat-sources{
+
+margin-top:28px;
+
+padding-top:18px;
+
+border-top:1px solid #E6EBEF;
+}
+
+.answer-final-note{
+    margin-top:28px !important;
+}
+
+.answer-final-note{
+    display:block;
+    margin-top:16px !important;
+    line-height:1.7;
+}
+
+/* ===== Стиль формы добавления материала ===== */
+
+.article-detail-page{
+    background:#F7F8F6;
+    padding:70px 40px;
+}
+
+.article-detail-card{
+    max-width:920px;
+    border:1px solid #D8E0EA;
+    border-radius:34px;
+    box-shadow:0 24px 60px rgba(60,81,133,.12);
+}
+
+.article-detail-card h1{
+    color:#3C5185;
+    font-size:40px;
+    margin-bottom:26px;
+}
+
+.admin-form{
+    gap:18px;
+}
+
+.admin-form label{
+    color:#3C5185;
+    font-size:15px;
+    font-weight:700;
+}
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select{
+    border:1px solid #D8E0EA;
+    border-radius:18px;
+    background:#FAFBFC;
+    padding:16px 18px;
+    font-size:16px;
+}
+
+.admin-form textarea{
+    min-height:300px;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus{
+    outline:none;
+    border-color:#3C5185;
+    box-shadow:0 0 0 4px rgba(60,81,133,.12);
+    background:white;
+}
+
+.admin-form button,
+.admin-form .primary-btn{
+    margin-top:6px;
+    height:56px;
+    border-radius:18px;
+    background:#9EC980;
+    color:white;
+    border:none;
+    font-size:16px;
+    font-weight:700;
+    box-shadow:0 12px 28px rgba(158,201,128,.35);
+    cursor:pointer;
+}
+
+.admin-form button:hover,
+.admin-form .primary-btn:hover{
+    background:#86B96B;
+    transform:translateY(-1px);
+}
+
+.article-detail-card .hero-badge{
+    background:#CEDFCC;
+    color:#3C5185;
 }
