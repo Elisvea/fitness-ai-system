@@ -1035,3 +1035,35 @@ margin-top:24px;
 .delete-article-btn:hover {
     opacity: 1;
 }
+
+.field-error {
+    color: #d93025;
+    font-size: 13px;
+    text-align: left;
+    margin-top: 6px;
+    margin-bottom: 12px;
+    padding-left: 6px;
+}
+
+
+.bmi-formula{
+    margin-top:14px;
+
+    padding:10px 14px;
+
+    background:#f8fbf8;
+
+    border:1px solid #e4eee4;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    color:#1f7a36;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    letter-spacing:0.2px;
+}

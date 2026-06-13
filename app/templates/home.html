@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Главная | Система поддержки здорового образа жизни</title>
-    <link rel="stylesheet" href="/static/css/styles.css?v=27">
+    <link rel="stylesheet" href="/static/css/styles.css?v=28">
 </head>
 
 <body>
@@ -121,8 +121,9 @@
             id="height-input"
             type="number"
             name="height"
-            min="1"
+            min="100"
             max="230"
+            step="1"
             value="{{ user.height if user.height else '' }}"
             required
             >
@@ -133,8 +134,9 @@
             id="weight-input"
             type="number"
             name="weight"
-            min="1"
+            min="30"
             max="200"
+            step="1"
             value="{{ user.weight if user.weight else '' }}"
             required
             >
@@ -235,11 +237,18 @@
                 </p>
 
                 <div class="info-block">
+
                     <h4>Индекс массы тела</h4>
+
                     <p>
                         ИМТ помогает приблизительно оценить соответствие массы тела росту.
-                        Результат используется для определения категории ИМТ и доступных целей пользователя.        
+                        Результат используется для определения категории ИМТ и доступных целей пользователя.
                     </p>
+
+                    <div class="bmi-formula">
+                        ИМТ = вес (кг) / рост² (м²)
+                    </div>
+
                 </div>
 
                 <div class="info-block">
@@ -343,8 +352,22 @@
         const heightInput = document.getElementById("height-input");
         const weightInput = document.getElementById("weight-input");
 
+
         const height = Number(heightInput.value);
         const weight = Number(weightInput.value);
+
+        if (
+            height < 100 ||
+            height > 230 ||
+            weight < 30 ||
+            weight > 200
+        ) {
+            alert(
+                "Рост должен быть от 100 до 230 см, вес — от 30 до 200 кг"
+            );
+
+            return;
+        }
 
         if (!height || !weight) {
             alert("Введите рост и вес");

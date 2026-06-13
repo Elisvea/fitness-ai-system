@@ -24,7 +24,6 @@ def add_admin_user():
         db.add(
             User(
                 username="admin",
-                email="admin@example.com",
                 password="admin",
                 role="admin"
             )
@@ -121,16 +120,44 @@ async def register_page(request: Request):
 async def register_user(
     request: Request,
     username: str = Form(...),
-    email: str = Form(...),
     password: str = Form(...)
 ):
+    username = username.strip()
+    password = password.strip()
+
+    context = {
+        "username": username,
+        "username_error": "",
+        "password_error": ""
+    }
+
+    if len(username) < 6 or len(username) > 30:
+        context["username_error"] = (
+            "Логин должен содержать от 6 до 30 символов"
+        )
+
+    if not re.fullmatch(r"[A-Za-z0-9]+", username):
+        context["username_error"] = (
+            "Логин может содержать только английские буквы и цифры"
+        )
+
+    if len(password) < 6 or len(password) > 30:
+        context["password_error"] = (
+            "Пароль должен содержать от 6 до 30 символов"
+        )
+
+    if context["username_error"] or context["password_error"]:
+        return templates.TemplateResponse(
+            name="register.html",
+            request=request,
+            context=context
+        )
+
     db = SessionLocal()
 
     existing_user = (
         db.query(User)
-        .filter(
-            (User.username == username) | (User.email == email)
-        )
+        .filter(User.username == username)
         .first()
     )
 
@@ -141,13 +168,12 @@ async def register_user(
             name="register.html",
             request=request,
             context={
-                "error_message": "Пользователь с таким логином или email уже существует"
+                "error_message": "Пользователь с таким логином уже существует"
             }
         )
 
     new_user = User(
         username=username,
-        email=email,
         password=password,
         role="user"
     )
@@ -236,10 +262,14 @@ async def update_profile(
     )
 
     if user:
-        bmi = calculate_bmi(height, weight)
-        bmi_category = get_bmi_category(bmi)
+        if height < 100 or height > 230 or weight < 30 or weight > 200:
+            db.close()
+            return RedirectResponse(url="/home", status_code=303)
 
-        available_goals = get_available_goals(bmi_category)
+            bmi = calculate_bmi(height, weight)
+            bmi_category = get_bmi_category(bmi)
+
+            available_goals = get_available_goals(bmi_category)
 
         if goal not in available_goals:
             goal = None
@@ -960,6 +990,16 @@ def get_requested_goal(message: str):
 
 def define_request_type(message: str):
     message_lower = message.lower()
+    full_recommendation_phrases = [
+    "расскажи про тренировки и питание",
+    "расскажи про упражнения и питание",
+    "расскажи про питание и тренировки",
+    "расскажи про питание и упражнения"
+]
+
+    if any(phrase in message_lower for phrase in full_recommendation_phrases):
+        return "recommendation"
+
 
     explanation_words = [
         "что такое",
@@ -997,6 +1037,7 @@ def define_request_type(message: str):
         "посовет",
         "рекоменд",
         "подходит",
+        "подойдет",
         "подходят",
         "что делать",
         "что надо",

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация | Фитнес-Помощник</title>
-    <link rel="stylesheet" href="/static/css/styles.css?v=11">
+    <link rel="stylesheet" href="/static/css/styles.css?v=12">
 </head>
 
 <body>
@@ -15,33 +15,37 @@
 
     <p>Создайте новый аккаунт</p>
 
+ 
+
     <form method="post" action="/register">
 
         <input
             type="text"
             name="username"
             placeholder="Введите логин"
-            minlength="6"
-            pattern="[A-Za-z0-9]+"
-            title="Минимум 6 символов. Только английские буквы и цифры"
+            value="{{ username if username else '' }}"
             required
         >
 
-        <input
-            type="email"
-            name="email"
-            placeholder="Введите email"
-            required
-        >
+        {% if username_error %}
+        <div class="field-error">
+            {{ username_error }}
+        </div>
+        {% endif %}
+
 
         <input
             type="password"
             name="password"
             placeholder="Введите пароль"
-            minlength="6"
-            title="Минимум 6 символов"
             required
         >
+
+        {% if password_error %}
+        <div class="field-error">
+            {{ password_error }}
+        </div>
+        {% endif %}
 
         <button type="submit">Зарегистрироваться</button>
 
