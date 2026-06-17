@@ -822,7 +822,7 @@ def build_personal_recommendation(
         answer_parts = [
             (
                 f"Рекомендации сформированы для категории ИМТ «{bmi_category}», "
-                f"выбранной цели «{goal}» и ограничений здоровья: {user_restrictions}."
+                f"выбранной цели «{goal}» и ограничений здоровья: {restrictions_text}."
             )
         ]
 
@@ -968,6 +968,10 @@ def build_personal_recommendation(
 
 def define_response_mode(message: str):
     message_lower = message.lower()
+    message_clean = message_lower.strip(" .!?")
+
+    if message_clean == "что мне делать":
+        return "full"
 
     offtopic_words = [
         "город",
@@ -1040,7 +1044,7 @@ def define_response_mode(message: str):
 def get_requested_goal(message: str):
     message_lower = message.lower()
 
-    if any(word in message_lower for word in ["похуд", "снизить вес", "снижение веса"]):
+    if any(word in message_lower for word in ["похуд", "худеть", "снизить вес", "снижение веса"]):
         return "Снижение веса"
 
     if any(word in message_lower for word in ["набрать массу", "набор массы", "набрать вес"]):
@@ -1123,38 +1127,94 @@ def classify_with_llm(message: str):
     from app.services.ai_service import client, MODEL_NAME
 
     prompt = f"""
-
 Ты — классификатор запросов системы по фитнесу.
 
-ВАЖНО:
-"full" = если пользователь спрашивает про цель:
-- набор массы
-- похудение
-- поддержание формы
-- общие рекомендации
+Сначала определи, относится ли запрос к тематике системы:
+- физическая активность;
+- упражнения;
+- тренировки;
+- питание;
+- здоровый образ жизни;
+- набор массы;
+- снижение веса;
+- поддержание формы.
+
+Если запрос не относится к тематике системы — ответь unknown.
+Если запрос общий, например "расскажи что мне делать", но в нём есть объект или тема вне фитнеса, питания и ЗОЖ, ответь unknown.
 
 Категории:
-- exercise → только тренировки
-- nutrition → только питание
-- full → цель / общие рекомендации / смешанные запросы
-- unknown → не по теме
+
+exercise
+→ вопрос только про тренировки, упражнения или физическую нагрузку.
+
+nutrition
+→ вопрос только про питание, рацион или продукты.
+
+full
+→ вопрос:
+- про общие рекомендации;
+- про цель пользователя;
+- про набор массы;
+- про снижение веса;
+- про поддержание формы;
+- одновременно про тренировки и питание;
+- без уточнения направления.
+
+unknown
+→ запрос не относится к тематике системы.
+
+Примеры:
+
+"посоветуй упражнения" → exercise
+"что есть после тренировки" → nutrition
+"как набрать массу" → full
+"расскажи что мне делать" → full
+"питание и тренировки" → full
+"что делать с питомцем" → unknown
+"расскажи про программирование" → unknown
+"расскажи что мне делать" → full
+"расскажи что мне делать с питомцем" → unknown
+"расскажи что мне делать с телефоном" → unknown
+"расскажи что мне делать с проектом" → unknown
+"расскажи что мне делать с упражнениями" → exercise
+"расскажи что мне делать с питанием" → nutrition
 
 Запрос:
 {message}
 
-Ответ только одним словом.
+Ответ только одним словом:
+exercise
+nutrition
+full
+unknown
 """
 
     try:
         response = client.chat(
             model=MODEL_NAME,
-            messages=[{"role": "user", "content": prompt}],
-            options={"temperature": 0}
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            options={
+                "temperature": 0
+            }
         )
 
-        result = response["message"]["content"].strip().lower()
+        result = (
+            response["message"]["content"]
+            .strip()
+            .lower()
+        )
 
-        if result in ["exercise", "nutrition", "full"]:
+        if result in [
+            "exercise",
+            "nutrition",
+            "full",
+            "unknown"
+        ]:
             return result
 
     except Exception:
@@ -1286,18 +1346,20 @@ async def chat(request: Request, chat_request: ChatRequest):
         response_mode = define_response_mode(chat_request.message)
         request_type = define_request_type(chat_request.message)
 
-        if response_mode == "unknown":
-            answer = (
-                "Я могу отвечать только на вопросы, связанные с физической активностью, "
-                "упражнениями и подходящим питанием."
-            )
-            found_articles = []
-
-        elif request_type == "explanation":
+        if request_type == "explanation" and response_mode != "unknown":
             answer = generate_answer_with_context(
                 chat_request.message,
                 [],
                 []
+            )
+
+            found_articles = []
+
+        elif response_mode == "unknown":
+            answer = (
+                "Я могу отвечать только на вопросы, связанные с физической активностью, "
+                "упражнениями и питанием. Если ваш вопрос относится к этой тематике, "
+                "уточните запрос."
             )
 
             found_articles = []
